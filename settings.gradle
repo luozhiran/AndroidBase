@@ -1,0 +1,8 @@
+rootProject.name='AndroidBase'
+include ':app'
+include ':itg-util'
+include ':threadtool'
+include ':mvvm'
+include ':okhttp-lib'
+include ':repository'
+include ':widget'
