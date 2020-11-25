@@ -156,7 +156,7 @@ public class LoggerInterceptor implements Interceptor {
                 charset = contentType.charset(UTF8);
             }
             sb.append("\n");
-            sb.append("-------requestBody content-------").append("\n");
+            sb.append("-------RequestBody content-------").append("\n");
 
             if (isPlaintext(buffer)) {
                 sb.append(buffer.readString(charset)).append("\n");
@@ -168,7 +168,7 @@ public class LoggerInterceptor implements Interceptor {
         long startNs = System.nanoTime();
         response = chain.proceed(request);
         long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-        sb.append("-------response content-------").append("\n");
+        sb.append("-------Response Header-------").append("\n");
         sb.append("response time:").append(tookMs).append("\n");
 
         ResponseBody responseBody = response.body();
