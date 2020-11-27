@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.yk.androidbase.model.ListViewMyModel" />
+            type="com.plugin.androidbase.model.ListViewMyModel" />
 
     </data>
 
@@ -17,13 +17,21 @@
         android:orientation="vertical"
         tools:context=".fragments.SimpleFragment">
 
-        <ListView
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:itemBinding="@{viewModel.multipleItems}"
-            app:itemIds="@{viewModel.itemIds}"
-            app:itemTypeCount="@{viewModel.multipleItems.itemTypeCount}"
-            app:items="@{viewModel.headerFooterItems}" />
+            android:layout_height="match_parent">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:itemBinding="@{viewModel.multipleItems}"
+                app:itemIds="@{viewModel.itemIds}"
+                app:itemTypeCount="@{viewModel.multipleItems.itemTypeCount}"
+                app:items="@{viewModel.headerFooterItems}" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
 
 
     </LinearLayout>

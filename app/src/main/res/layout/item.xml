@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.yk.androidbase.model.ItemViewModel" />
+            type="com.plugin.androidbase.model.ItemViewModel" />
 
         <import type="android.view.View" />
     </data>

@@ -6,9 +6,9 @@
 
         <variable
             name="viewModel"
-            type="com.yk.androidbase.model.RecyclerMyModel" />
+            type="com.plugin.androidbase.model.RecyclerMyModel" />
 
-        <import type="com.yk.mvvm.bindingAdapter.LayoutManagers" />
+        <import type="com.plugin.mvvm.bindingAdapter.LayoutManagers" />
     </data>
 
     <LinearLayout

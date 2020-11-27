@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.yk.androidbase.datas.NewsData" />
+            type="com.plugin.androidbase.datas.NewsData" />
     </data>
 
     <LinearLayout
