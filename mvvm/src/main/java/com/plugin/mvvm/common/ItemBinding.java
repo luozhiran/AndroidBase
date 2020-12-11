@@ -6,14 +6,15 @@ import androidx.annotation.LayoutRes;
 import androidx.databinding.ViewDataBinding;
 
 /**
- *为集合中绑定在一起item和view，提供必要的信息。信息包含variable id(编译器自动生成的)，和layout文件，
+ * 为集合中绑定在一起item和view，提供必要的信息。信息包含variable id(编译器自动生成的)，和layout文件，
  * 以及一些其他的信息
+ *
  * @param <T>
  */
 public class ItemBinding<T> {
 
     /**
-     *使用下面的常量，表示variable id，如果不需要数据，项header和footer，不需要把item和layout绑定在一起
+     * 使用下面的常量，表示variable id，如果不需要数据，项header和footer，不需要把item和layout绑定在一起
      */
     public static final int VAR_NONE = 0;
     private static final int VAR_INVALID = -1;
@@ -66,6 +67,12 @@ public class ItemBinding<T> {
             extraBindings = new SparseArray<>(1);
         }
         extraBindings.put(variableId, value);
+        return this;
+    }
+
+
+    public final ItemBinding<T> bindExtra(SparseArray<Object> sparseArray) {
+        extraBindings = sparseArray;
         return this;
     }
 

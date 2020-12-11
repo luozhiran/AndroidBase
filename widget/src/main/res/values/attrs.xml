@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NavaHead">
+        <attr name="src" format="reference" />
+        <attr name="textColor" format="color" />
+        <attr name="textSize" format="dimension" />
+        <attr name="textBackground" format="color" />
+        <attr name="textGravity" format="enum">
+
+            <enum name="CENTER" value="1" />
+            <enum name="CENTER_VERTICAL" value="2" />
+            <enum name="CENTER_HORIZONTAL" value="3" />
+            <enum name="LEFT" value="4" />
+            <enum name="RIGHT" value="5" />
+            <enum name="TOP" value="6" />
+            <enum name="BOTTOM" value="7" />
+        </attr>
+        <attr name="text" format="string" />
+
+        <attr name="srcWidth" format="dimension" />
+        <attr name="srcHeight" format="dimension" />
+        <attr name="srcPaddingLeft" format="dimension"/>
+        <attr name="srcPaddingTop" format="dimension"/>
+        <attr name="srcPaddingRight" format="dimension"/>
+        <attr name="srcPaddingBottom" format="dimension"/>
+    </declare-styleable>
+</resources>

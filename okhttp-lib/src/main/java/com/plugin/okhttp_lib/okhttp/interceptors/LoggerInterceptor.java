@@ -1,9 +1,19 @@
 package com.plugin.okhttp_lib.okhttp.interceptors;
 
+import android.text.TextUtils;
+
 import com.itg.lib_log.L;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
@@ -32,9 +42,11 @@ public class LoggerInterceptor implements Interceptor {
 
 
     private HL level;
+    private String writePath;
 
-    public LoggerInterceptor(HL hl) {
+    public LoggerInterceptor(HL hl, String path) {
         level = hl;
+        writePath = path;
     }
 
     @Override
@@ -47,21 +59,23 @@ public class LoggerInterceptor implements Interceptor {
         } else if (level == HL.HEADERS) {
             return chain.proceed(chain.request());
         } else if (level == HL.BASIC) {
-            return printResponseBody(chain);
+            return printBasic(chain);
         }
         return chain.proceed(chain.request());
     }
 
-    private Response printResponseBody(Chain chain) throws IOException {
+
+    private Response printBasic(Chain chain) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("-------response content-------").append("\n");
         Response response = null;
         long startNs = System.nanoTime();
         response = chain.proceed(chain.request());
         long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-        sb.append("-------response content-------").append("\n");
-        sb.append("response time:").append(tookMs).append("\n");
 
+        sb.append("-------response header-------").append("\n");
+
+        sb.append("response time:").append(tookMs).append("\n");
         ResponseBody responseBody = response.body();
         long contentLength = responseBody.contentLength();
         sb.append("ResponseBody size: ").append(FormatFileSize(contentLength)).append("\n");
@@ -75,6 +89,7 @@ public class LoggerInterceptor implements Interceptor {
         for (int i = 0, count = headers.size(); i < count; i++) {
             sb.append(headers.name(i)).append(":").append(headers.value(i)).append("\n");
         }
+
 
         if (HttpHeaders.hasBody(response)) {
             BufferedSource source = responseBody.source();
@@ -114,7 +129,11 @@ public class LoggerInterceptor implements Interceptor {
         } else {
             sb.append("response don't have  responseBody").append("\n");
         }
+
         L.d(sb.toString());
+        if (!TextUtils.isEmpty(writePath)) {
+            writeSD(writePath, sb.toString());
+        }
         return response;
     }
 
@@ -125,7 +144,11 @@ public class LoggerInterceptor implements Interceptor {
         RequestBody body = request.body();
         Connection connection = chain.connection();
         StringBuilder sb = new StringBuilder();
+
         sb.append(" \n----- okhttp request log ----- \n");
+
+        sb.append("\n-------Request header-------").append("\n");
+
         sb.append(request.method()).append("\n");
         sb.append(request.url()).append("\n");
         if (connection != null) {
@@ -147,6 +170,9 @@ public class LoggerInterceptor implements Interceptor {
                 sb.append(name).append(":").append(headers.value(i));
             }
         }
+
+
+        sb.append("\n-------Request body-------").append("\n");
         if (body != null) {
             Buffer buffer = new Buffer();
             body.writeTo(buffer);
@@ -156,7 +182,6 @@ public class LoggerInterceptor implements Interceptor {
                 charset = contentType.charset(UTF8);
             }
             sb.append("\n");
-            sb.append("-------RequestBody content-------").append("\n");
 
             if (isPlaintext(buffer)) {
                 sb.append(buffer.readString(charset)).append("\n");
@@ -168,9 +193,11 @@ public class LoggerInterceptor implements Interceptor {
         long startNs = System.nanoTime();
         response = chain.proceed(request);
         long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-        sb.append("-------Response Header-------").append("\n");
-        sb.append("response time:").append(tookMs).append("\n");
 
+
+        sb.append("\n-------Response Header-------").append("\n");
+
+        sb.append("response time:").append(tookMs).append("\n");
         ResponseBody responseBody = response.body();
         long contentLength = responseBody.contentLength();
         sb.append("ResponseBody size: ").append(FormatFileSize(contentLength)).append("\n");
@@ -225,6 +252,9 @@ public class LoggerInterceptor implements Interceptor {
             sb.append("response don't have  responseBody").append("\n");
         }
         L.d(sb.toString());
+        if (!TextUtils.isEmpty(writePath)) {
+            writeSD(writePath, sb.toString());
+        }
         return response;
     }
 
@@ -258,9 +288,35 @@ public class LoggerInterceptor implements Interceptor {
                     return false;
                 }
             }
+
             return true;
         } catch (EOFException e) {
             return false; // Truncated UTF-8 sequence.
+        }
+    }
+
+    private static void writeSD(String path, String msg) {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+        }
+        FileOutputStream fi = null;
+        try {
+            fi = new FileOutputStream(file, true);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fi));
+            bw.write(msg);
+            bw.write("\n\n\n");
+            bw.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fi.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -17,6 +17,21 @@
         android:orientation="vertical"
         tools:context=".fragments.SimpleFragment">
 
+
+        <com.plugin.widget.NavaHead
+
+
+            android:id="@+id/head"
+            app:textBackground="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcWidth="48dp"
+            app:srcHeight="48dp"
+            android:background="@android:color/darker_gray"
+            app:src="@mipmap/ic_launcher"
+            app:text="你好"
+            app:textGravity="CENTER" />
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

@@ -9,7 +9,7 @@ import com.plugin.androidbase.datas.NewsCategoryData;
 
 import com.plugin.androidbase.datas.NewsData;
 import com.plugin.mvvm.base.DataModel;
-import com.plugin.okhttp_lib.retrofit.RfOk;
+import com.plugin.okhttp_lib.okhttp.RfOk;
 import com.plugin.threadtool.ThreadClient;
 
 

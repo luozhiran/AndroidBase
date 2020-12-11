@@ -1,0 +1,31 @@
+apply plugin: 'maven'
+
+uploadArchives {
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            repository(url: NEXUS_URL) {
+                authentication(userName: NEXUS_USER, password: NEXUS_PWD)
+                pom.groupId = GROUP_ID
+                pom.version = VERSION
+                pom.artifactId = ARTIFACT_ID
+            }
+
+            pom.whenConfigured { pom ->
+                pom.dependencies.forEach { dep ->
+                    if (dep.getVersion() == "unspecified") {
+                        def d = ":"+dep.getArtifactId()
+                        def realVersion =findProject(d).findProperty("VERSION")
+                        dep.setGroupId(GROUP_ID)
+//                        dep.setVersion(VERSION)
+                        dep.setVersion(realVersion)
+                        println"${GROUP_ID}:${dep.getArtifactId()}:${realVersion}"
+                    }
+
+                }
+            }
+
+        }
+    }
+}
+

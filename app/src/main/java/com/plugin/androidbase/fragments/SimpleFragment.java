@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.itg.lib_log.L;
 import com.plugin.androidbase.actions.Outcome0;
 import com.plugin.androidbase.actions.Outcome1;
 import com.plugin.androidbase.databinding.FragmentSimpleBinding;
@@ -77,6 +77,7 @@ public class SimpleFragment extends Fragment {
                         @Override
                         public void error(Call call, String s) {
 
+
                         }
                     });
                     break;
@@ -92,6 +93,12 @@ public class SimpleFragment extends Fragment {
         binding = FragmentSimpleBinding.inflate(LayoutInflater.from(getContext()));
         simpleViewModel = ViewModelProviders.of(this).get(ListViewMyModel.class);
         binding.setViewModel(simpleViewModel);
+        binding.head.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                L.e("ddddddddddddddddd");
+            }
+        });
         return binding.getRoot();
     }
 

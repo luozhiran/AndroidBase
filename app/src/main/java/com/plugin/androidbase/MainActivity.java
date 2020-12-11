@@ -20,12 +20,12 @@ import com.plugin.androidbase.databinding.ActivityMainBinding;
 import com.plugin.androidbase.datas.NewsCategoryData;
 import com.plugin.androidbase.model.FragmentStatePageAdapterViewModel;
 import com.plugin.itg_util.ToolBarUtils;
-import com.plugin.okhttp_lib.HpConfig;
+
 import com.plugin.okhttp_lib.okhttp.ItgOk;
-import com.plugin.okhttp_lib.okhttp.Ok;
+
 import com.plugin.okhttp_lib.okhttp.interceptors.LoggerInterceptor;
 
-import java.io.File;
+
 import java.io.IOException;
 
 
@@ -40,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        http://192.168.40.163:8080
+//        http://47.100.4.54:8080
         super.onCreate(savedInstanceState);
-        HpConfig.OkConfig(true, LoggerInterceptor.HL.BODY,"http://192.168.40.163:8080",getApplication());
         requestPermission();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         ToolBarUtils.hideBar(this);
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initScan() {
 
+
         NewsCategoryData data = new NewsCategoryData();
         data.setName("罗志然");
         data.setA(1111);
@@ -67,15 +69,12 @@ public class MainActivity extends AppCompatActivity {
         a.setB(3.9493);
         data.setData(a);
 
-        File file = new File(Environment.getExternalStorageDirectory() + "/abc.txt");
-        if (!file.exists()) throw new IllegalArgumentException("ddddddddd");
+
         ItgOk.instance()
                 .url("http://192.168.40.163:8080/test/multipart1")
                 .addHeader("abc", "abc")
-                .addMultiFile("file", file)
+                .addParams("",3)
                 .autoCancel(getLifecycle())
-                .method(Ok.POST)
-                .ok()
                 .go(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {

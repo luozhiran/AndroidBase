@@ -40,7 +40,5 @@ public abstract class ItgBuilder implements SingleBuilder, MultiBuilder, Builder
         }
     }
 
-    public abstract Ok ok();
-
 
 }

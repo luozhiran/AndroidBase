@@ -1,4 +1,4 @@
-package com.plugin.okhttp_lib.retrofit.gson;
+package com.plugin.okhttp_lib.okhttp.retrofit.gson;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

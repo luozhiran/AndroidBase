@@ -5,11 +5,7 @@ import android.content.Context;
 
 import com.itg.lib_log.L;
 
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 
 import androidx.annotation.Nullable;
@@ -18,40 +14,19 @@ import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
 import com.plugin.okhttp_lib.okhttp.interceptors.*;
-import com.plugin.okhttp_lib.okhttp.operate.ItgBuilder;
 
 public class ItgOk extends Ok {
     private volatile static ItgOk itgOk;
     private OkHttpClient okHttpClient;
+    protected String url;
 
-    //开启日志打印拦截器
-    private static boolean LOGGER_INTERCEPTOR = true;
-    private static LoggerInterceptor.HL LEVEL = null;
-    public static String GLOBAL_URL = "";
-    private static Application mApplication;
-
-
-    //在instance()之前调用
-    public static void initItgOk(boolean openLogger, LoggerInterceptor.HL loggerLevel, String globalUrl, Application application) {
-        LOGGER_INTERCEPTOR = openLogger;
-        LEVEL = loggerLevel;
-        if (globalUrl != null) {
-            char lastChar = globalUrl.toCharArray()[globalUrl.length() - 1];
-            if (lastChar != '/') {
-                GLOBAL_URL = globalUrl + "/";
-            } else {
-                GLOBAL_URL = globalUrl;
-            }
-        }
-//        StringBuilder stringBuilder = new StringBuilder();
-//        stringBuilder.append(openLogger).append("#").append(loggerLevel).append("#").append(globalUrl);
-//        write(application, stringBuilder.toString());
-    }
 
     public static ItgOk instance() {
         if (itgOk == null) {
@@ -64,156 +39,164 @@ public class ItgOk extends Ok {
         return itgOk;
     }
 
-
     private ItgOk() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if (LOGGER_INTERCEPTOR) {
-            builder.addInterceptor(new LoggerInterceptor(LEVEL));
-        }
         okHttpClient = builder.build();
+    }
 
+    private ItgOk(Builder builder) {
+        url = builder.globalUrl;
+        OkHttpClient.Builder okbuilder = new OkHttpClient.Builder();
+        if (builder.interceptors != null) {
+            for (Interceptor i : builder.interceptors) {
+                okbuilder.addInterceptor(i);
+            }
+        }
+        if (builder.openLog) {
+            okbuilder.addInterceptor(new LoggerInterceptor(builder.level,builder.writePath));
+        }
+        okHttpClient = okbuilder.build();
     }
 
 
-    public ItgBuilder url(String url) {
+    public ItgOk url(String url) {
         request().url(url);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder header(String name, String value) {
+    public ItgOk header(String name, String value) {
         request().header(name, value);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addHeader(String name, String value) {
+    public ItgOk addHeader(String name, String value) {
         request().addHeader(name, value);
-        return request();
+        return this;
     }
 
-    public ItgBuilder removeHeader(String name) {
+    public ItgOk removeHeader(String name) {
         request().removeHeader(name);
-        return request();
+        return this;
     }
 
-    public ItgBuilder headers(Headers headers) {
+    public ItgOk headers(Headers headers) {
         request().headers(headers);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder cacheControl(CacheControl cacheControl) {
+    public ItgOk cacheControl(CacheControl cacheControl) {
         request().cacheControl(cacheControl);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder tag(@Nullable Object tag) {
+    public ItgOk tag(@Nullable Object tag) {
         request().tag(tag);
-        return request();
+        return this;
     }
 
 
-    public <T> ItgBuilder tag(Class<? super T> type, @Nullable T tag) {
+    public <T> ItgOk tag(Class<? super T> type, @Nullable T tag) {
         request().tag(tag);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder method(String method) {
+    public ItgOk method(String method) {
         request().method(method);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder autoCancel(Lifecycle lifecycle) {
+    public ItgOk autoCancel(Lifecycle lifecycle) {
         request().autoCancel(lifecycle);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addMultiFile(String name, String file) {
+    public ItgOk addMultiFile(String name, String file) {
         addMultiFile(name, null, null, file);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addMultiFile(String name, File file) {
+    public ItgOk addMultiFile(String name, File file) {
         addMultiFile(name, null, null, file);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addMultiFile(String name, MediaType mediaType, String fileName, File file) {
+    public ItgOk addMultiFile(String name, MediaType mediaType, String fileName, File file) {
         request().addMultiFile(name, mediaType, fileName, file);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addMultiFile(String name, MediaType mediaType, String fileName, String file) {
+    public ItgOk addMultiFile(String name, MediaType mediaType, String fileName, String file) {
         request().addMultiFile(name, mediaType, fileName, file);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addMultiParams(String key, String param) {
+    public ItgOk addMultiParams(String key, String param) {
         request().addMultiFile(key, param);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addMultiJson(String key, Object json) {
+    public ItgOk addMultiJson(String key, Object json) {
         request().addMultiJson(key, json);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addParams(String key, String params) {
+    public ItgOk addParams(String key, String params) {
         request().addParams(key, params);
-        return request();
+        return this;
     }
 
-    public ItgBuilder addParams(String key, int params) {
+    public ItgOk addParams(String key, int params) {
         addParams(key, String.valueOf(params));
-        return request();
+        return this;
     }
 
-    public ItgBuilder addParams(String key, double params) {
+    public ItgOk addParams(String key, double params) {
         addParams(key, String.valueOf(params));
-        return request();
+        return this;
     }
 
-    public ItgBuilder addParams(String key, float params) {
+    public ItgOk addParams(String key, float params) {
         addParams(key, String.valueOf(params));
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addFile(String file) {
+    public ItgOk addFile(String file) {
         request().addFile(file);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addFile(File file) {
+    public ItgOk addFile(File file) {
         request().addFile(file);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addJson(Object obj) {
+    public ItgOk addJson(Object obj) {
         request().addJson(obj);
-        return request();
+        return this;
     }
 
 
-    public ItgBuilder addContent(String content) {
+    public ItgOk addContent(String content) {
         request().addContent(content);
-        return request();
+        return this;
     }
 
-    @Override
     public void go(Callback callback) {
         Request request = request().build();
         L.e(request.url().toString());
@@ -223,25 +206,59 @@ public class ItgOk extends Ok {
         call.enqueue(callback);
     }
 
-    private static void write(Application application, String msg) {
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = application.openFileOutput("globalUrl.txt", Context.MODE_PRIVATE);
-            fileOutputStream.write(msg.getBytes());
-            fileOutputStream.flush();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public static class Builder {
+        private String globalUrl;
+        private boolean openLog;
+        private LoggerInterceptor.HL level;
+        private Interceptor[] interceptors;
+        private Application application;
+        private String writePath;
+
+        public Builder globalUrl(String url) {
+            if (url != null) {
+                char lastChar = url.toCharArray()[url.length() - 1];
+                if (lastChar != '/') {
+                    globalUrl = url + "/";
+                } else {
+                    globalUrl = url;
+                }
+            }
+            return this;
+        }
+
+
+        public Builder openHttpLog(boolean open) {
+            openLog = open;
+            return this;
+        }
+
+        public Builder logLevel(LoggerInterceptor.HL hl) {
+            level = hl;
+            return this;
+        }
+
+        public Builder addInterceptors(Interceptor... interceptor) {
+            interceptors = interceptor;
+            return this;
+        }
+
+        public Builder write(String path) {
+            this.writePath = path;
+            return this;
+        }
+
+
+        public void build(Application application) {
+            this.application = application;
+            if (itgOk == null) {
+                synchronized (ItgOk.class) {
+                    if (itgOk == null) {
+                        itgOk = new ItgOk(this);
+                    }
+                }
             }
         }
+
     }
-
-
 }

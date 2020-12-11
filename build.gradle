@@ -14,8 +14,10 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.4'
         classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        classpath  'io.helloworld.robot:plugin:1.1-SNAPSHOT'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.groovy files
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -28,6 +30,7 @@ allprojects {
             // 本地 repo 地址，这里写上你们电脑上自己的地址
             url = 'C:\\Users\\luozhiran\\.m2\\repository'
         }
+        maven { url 'http://192.168.70.94:8081/nexus/content/repositories/android/' }
     }
 }
 

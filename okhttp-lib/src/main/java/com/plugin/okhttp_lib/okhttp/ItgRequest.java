@@ -20,22 +20,19 @@ import okhttp3.Request;
 
 class ItgRequest extends ItgBuilder {
 
-    private Ok ok;
     private Request.Builder builder;
 
     private String DEFAULT_METHOD = Ok.GET;
 
     private Lifecycle lifecycle;
 
-    public static ItgRequest of(Ok ok) {
-        return new ItgRequest(ok);
+    public static ItgRequest of() {
+        return new ItgRequest();
     }
 
 
-    private ItgRequest(Ok ok) {
+    private ItgRequest() {
         builder = new Request.Builder();
-        this.ok = ok;
-
     }
 
     @Override
@@ -45,9 +42,9 @@ class ItgRequest extends ItgBuilder {
             builder.url(url);
         } else {
             if (url.toCharArray()[0] == '/') {
-                url = ItgOk.GLOBAL_URL + url.replaceFirst("/", "");
+                url = ItgOk.instance().url + url.replaceFirst("/", "");
             } else {
-                url = ItgOk.GLOBAL_URL + url;
+                url = ItgOk.instance().url  + url;
             }
         }
         builder.url(url);
@@ -111,10 +108,11 @@ class ItgRequest extends ItgBuilder {
     }
 
 
-    public Request build() {
+    protected Request build() {
         execParams();
         return builder.build();
     }
+
 
     private void execParams() {
         switch (DEFAULT_METHOD) {
@@ -237,12 +235,6 @@ class ItgRequest extends ItgBuilder {
         getSingleBuilder().addContent(content);
         return this;
     }
-
-    @Override
-    public Ok ok() {
-        return ok;
-    }
-
 
     public void autoCancel(CancelRequestObserver observer) {
         if (lifecycle != null) {

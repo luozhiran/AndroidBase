@@ -1,4 +1,4 @@
-package com.plugin.okhttp_lib.retrofit.gson;
+package com.plugin.okhttp_lib.okhttp.retrofit.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

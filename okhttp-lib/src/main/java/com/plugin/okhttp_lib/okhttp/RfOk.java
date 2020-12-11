@@ -1,18 +1,17 @@
-package com.plugin.okhttp_lib.retrofit;
+package com.plugin.okhttp_lib.okhttp;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.plugin.okhttp_lib.okhttp.ItgOk;
-import com.plugin.okhttp_lib.retrofit.gson.DoubleDefaultAdapter;
-import com.plugin.okhttp_lib.retrofit.gson.IntegerDefaultAdapter;
-import com.plugin.okhttp_lib.retrofit.gson.LongDefaultAdapter;
-import com.plugin.okhttp_lib.retrofit.gson.StringNullAdapter;
+import com.plugin.okhttp_lib.okhttp.retrofit.gson.DoubleDefaultAdapter;
+import com.plugin.okhttp_lib.okhttp.retrofit.gson.IntegerDefaultAdapter;
+import com.plugin.okhttp_lib.okhttp.retrofit.gson.LongDefaultAdapter;
+import com.plugin.okhttp_lib.okhttp.retrofit.gson.StringNullAdapter;
 
 import java.lang.reflect.Field;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RfOk {
@@ -44,7 +43,7 @@ public class RfOk {
                 .registerTypeAdapter(String.class, new StringNullAdapter())
                 .create();
         builder.addConverterFactory(GsonConverterFactory.create(gson));
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());
 
         ItgOk ok = ItgOk.instance();
         try {
@@ -56,7 +55,7 @@ public class RfOk {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        builder.baseUrl(ItgOk.GLOBAL_URL);
+        builder.baseUrl(ok.url);
         retrofit = builder.build();
 
     }
@@ -65,5 +64,9 @@ public class RfOk {
     public <T> T create(Class<T> tClass){
         return retrofit.create(tClass);
     }
+
+
+
+
 
 }
