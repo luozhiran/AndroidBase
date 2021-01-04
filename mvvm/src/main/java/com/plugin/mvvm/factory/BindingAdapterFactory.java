@@ -46,24 +46,6 @@ public class BindingAdapterFactory {
     }
 
 
-
-    @BindingAdapter(value = {"fixFragments", "fragmentTitle", "fixFragmentSize"}, requireAll = false)
-    public static void fragmentPagerAdapter(ViewPager viewPager, List<Fragment> list, List<String> title, int fixFragmentSize) {
-        if (!list.isEmpty()) {
-            PagerAdapter adapter = viewPager.getAdapter();
-            Context context = viewPager.getContext();
-            if (adapter == null) {
-                if (context instanceof FragmentActivity) {
-                    ItgFragmentPagerAdapter pagerAdapter = ItgFragmentPagerAdapter.of(((FragmentActivity) context).getSupportFragmentManager(), list, title);
-                    viewPager.setAdapter(pagerAdapter);
-                } else {
-                    throw new IllegalStateException("must is activity");
-                }
-            }
-        }
-    }
-
-
     @BindingAdapter(value = {"tabItems", "tabCount"}, requireAll = false)
     public static void newTabItem(TabLayout tableLayout, List<String> list, int size) {
         if (tableLayout.getTabCount() == 0) {
@@ -77,7 +59,21 @@ public class BindingAdapterFactory {
     }
 
 
-
+    @BindingAdapter(value = {"fragments", "fragmentTitle", "fragmentSize"}, requireAll = false)
+    public static void fragmentPagerAdapter(ViewPager viewPager, List<Fragment> list, List<String> title, int fragmentSize) {
+        if (!list.isEmpty()) {
+            PagerAdapter adapter = viewPager.getAdapter();
+            Context context = viewPager.getContext();
+            if (adapter == null) {
+                if (context instanceof FragmentActivity) {
+                    ItgFragmentPagerAdapter pagerAdapter = ItgFragmentPagerAdapter.of(((FragmentActivity) context).getSupportFragmentManager(), list, title);
+                    viewPager.setAdapter(pagerAdapter);
+                } else {
+                    throw new IllegalStateException("must is activity");
+                }
+            }
+        }
+    }
 
 
     @BindingAdapter("layoutManager")
