@@ -33,4 +33,4 @@ dependencies {
     implementation "com.github.luozhiran:Logger:${rootProject.ext.log_version}"
     implementation 'top.zibin:Luban:1.1.8'
 }
-apply from:'../mvn_push.gradle'
+//apply from:'../mvn_push.gradle'

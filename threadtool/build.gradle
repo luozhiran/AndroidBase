@@ -32,4 +32,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "com.github.luozhiran:Logger:${rootProject.ext.log_version}"
 }
-apply from:'../mvn_push.gradle'
+//apply from:'../mvn_push.gradle'
