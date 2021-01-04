@@ -128,9 +128,6 @@ public class FileIoUtils {
             e.printStackTrace();
         } finally {
             try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
                 if (outputStream != null) {
                     outputStream.close();
                 }
