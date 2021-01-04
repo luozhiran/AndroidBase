@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.hujiang.android-aspectjx'
-apply plugin:'io.helloworld.myplugin'
 apply plugin: 'UploadPlugin'
 
 android {
