@@ -46,21 +46,9 @@ public class BindingAdapterFactory {
     }
 
 
-    @BindingAdapter(value = {"tabItems", "tabCount"}, requireAll = false)
-    public static void newTabItem(TabLayout tableLayout, List<String> list, int size) {
-        if (tableLayout.getTabCount() == 0) {
-            for (String str : list) {
-                TabLayout.Tab tab = tableLayout.newTab();
-                tab.setText(str);
-                tableLayout.addTab(tab);
-            }
-        }
 
-    }
-
-
-    @BindingAdapter(value = {"fragments", "fragmentTitle", "fragmentSize"}, requireAll = false)
-    public static void fragmentPagerAdapter(ViewPager viewPager, List<Fragment> list, List<String> title, int fragmentSize) {
+    @BindingAdapter(value = {"fixFragments", "fragmentTitle", "fixFragmentSize"}, requireAll = false)
+    public static void fragmentPagerAdapter(ViewPager viewPager, List<Fragment> list, List<String> title, int fixFragmentSize) {
         if (!list.isEmpty()) {
             PagerAdapter adapter = viewPager.getAdapter();
             Context context = viewPager.getContext();
@@ -74,6 +62,22 @@ public class BindingAdapterFactory {
             }
         }
     }
+
+
+    @BindingAdapter(value = {"tabItems", "tabCount"}, requireAll = false)
+    public static void newTabItem(TabLayout tableLayout, List<String> list, int size) {
+        if (tableLayout.getTabCount() == 0) {
+            for (String str : list) {
+                TabLayout.Tab tab = tableLayout.newTab();
+                tab.setText(str);
+                tableLayout.addTab(tab);
+            }
+        }
+
+    }
+
+
+
 
 
     @BindingAdapter("layoutManager")
