@@ -207,22 +207,12 @@ public class ItgOk extends Ok {
         final Call call = okHttpClient.newCall(request);
         request().autoCancel(new ItgRequest.CancelRequestObserver(call));
         releaseBuild();
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (e.getMessage().startsWith("Failed to connect to")) {
-                    Toast.makeText(application, "不能连接到网络", Toast.LENGTH_SHORT).show();
-                }
-                callback.onFailure(call, e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                callback.onResponse(call, response);
-            }
-        });
+        call.enqueue(callback);
     }
 
+    public Application getApplication() {
+        return application;
+    }
 
     public static class Builder {
         private String globalUrl;
