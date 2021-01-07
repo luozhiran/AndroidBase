@@ -53,4 +53,4 @@ dependencies {
 
 
 }
-//apply from:'../mvn_push.gradle'
+apply from:'../mvn_push.gradle'
