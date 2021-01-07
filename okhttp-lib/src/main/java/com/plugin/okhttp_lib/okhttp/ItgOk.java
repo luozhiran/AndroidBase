@@ -2,10 +2,12 @@ package com.plugin.okhttp_lib.okhttp;
 
 import android.app.Application;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.itg.lib_log.L;
 
 import java.io.File;
+import java.io.IOException;
 
 
 import androidx.annotation.Nullable;
@@ -26,6 +28,7 @@ public class ItgOk extends Ok {
     private volatile static ItgOk itgOk;
     private OkHttpClient okHttpClient;
     protected String url;
+    private Application application;
 
 
     public static ItgOk instance() {
@@ -53,8 +56,9 @@ public class ItgOk extends Ok {
             }
         }
         if (builder.openLog) {
-            okbuilder.addInterceptor(new LoggerInterceptor(builder.level,builder.writePath));
+            okbuilder.addInterceptor(new LoggerInterceptor(builder.level, builder.writePath));
         }
+        this.application = builder.application;
         okHttpClient = okbuilder.build();
     }
 
@@ -197,13 +201,26 @@ public class ItgOk extends Ok {
         return this;
     }
 
-    public void go(Callback callback) {
+    public void go(final Callback callback) {
         Request request = request().build();
         L.e(request.url().toString());
         final Call call = okHttpClient.newCall(request);
         request().autoCancel(new ItgRequest.CancelRequestObserver(call));
         releaseBuild();
-        call.enqueue(callback);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (e.getMessage().startsWith("Failed to connect to")) {
+                    Toast.makeText(application, "不能连接到网络", Toast.LENGTH_SHORT).show();
+                }
+                callback.onFailure(call, e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                callback.onResponse(call, response);
+            }
+        });
     }
 
 
