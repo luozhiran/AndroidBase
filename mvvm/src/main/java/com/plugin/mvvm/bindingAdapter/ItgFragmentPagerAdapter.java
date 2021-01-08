@@ -1,5 +1,7 @@
 package com.plugin.mvvm.bindingAdapter;
 
+import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,4 +39,6 @@ public class ItgFragmentPagerAdapter extends FragmentPagerAdapter {
         ItgFragmentPagerAdapter itgFragmentPagerAdapter = new ItgFragmentPagerAdapter(fm, list, pageTitle);
         return itgFragmentPagerAdapter;
     }
+
+
 }

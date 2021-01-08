@@ -67,6 +67,7 @@ public class BindingAdapterFactory {
             if (adapter == null) {
                 if (context instanceof FragmentActivity) {
                     ItgFragmentPagerAdapter pagerAdapter = ItgFragmentPagerAdapter.of(((FragmentActivity) context).getSupportFragmentManager(), list, title);
+                    viewPager.setOffscreenPageLimit(fragmentSize);
                     viewPager.setAdapter(pagerAdapter);
                 } else {
                     throw new IllegalStateException("must is activity");
