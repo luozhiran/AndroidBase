@@ -45,7 +45,7 @@ public class InvokeSystemCameraUtils {
     private String mAuthority;
 
 
-    public static InvokeSystemCameraUtils create(Application application, String authority) {
+    public static InvokeSystemCameraUtils create(Context application, String authority) {
 
         return new InvokeSystemCameraUtils(application, authority);
     }
