@@ -35,9 +35,9 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 public class InvokeSystemCameraUtils {
-    private static final int REQUESTCODE_TAKE = 1000;
-    private static final int REQUESTCODE_PICK = 10001;
-    private static final int REQUESTCODE_CUTTING = 1002;
+    private int REQUESTCODE_TAKE = 1000;
+    private int REQUESTCODE_PICK = 10001;
+    private int REQUESTCODE_CUTTING = 1002;
     private Context mContext;
     private String mTakePhotoSavePath;
     private String mTakePhotoPhotoName;
@@ -135,8 +135,9 @@ public class InvokeSystemCameraUtils {
     }
 
 
-    public void gotoCameraForResult(Activity activity) {
+    public void gotoCameraForResult(Activity activity, int request) {
         // 创建打开系统相机的意图
+        REQUESTCODE_TAKE = request;
         Intent intentCamera = new Intent();
         intentCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
         // 设置参数。将拍照所得的照片存到磁盘中；照片文件的位置，此处是在外置SD卡
@@ -163,7 +164,8 @@ public class InvokeSystemCameraUtils {
      *
      * @param activity
      */
-    public void gotoGallery(Activity activity) {
+    public void gotoGallery(Activity activity, int request) {
+        REQUESTCODE_PICK = request;
         Intent pickIntent = new Intent(Intent.ACTION_PICK, null);
         pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         activity.startActivityForResult(pickIntent, REQUESTCODE_PICK);
@@ -180,45 +182,43 @@ public class InvokeSystemCameraUtils {
      * @param callback
      */
     public void customCompress(int requestCode, int resultCode, Intent data, OnGalleryResultCallback callback) {
-        switch (requestCode) {
-            case REQUESTCODE_PICK:// 直接从相册获取
-                try {
-                    Uri uri = data.getData();
-                    String path = getRealPathFromUri(uri);
-                    callback.onResultPhone(uri, path, path);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();// 用户点击取消操作时的异常
+
+        if (requestCode == REQUESTCODE_PICK) {
+            try {
+                Uri uri = data.getData();
+                String path = getRealPathFromUri(uri);
+                callback.onResultPhone(uri, path, path);
+            } catch (NullPointerException e) {
+                e.printStackTrace();// 用户点击取消操作时的异常
+            }
+        } else if (requestCode == REQUESTCODE_TAKE) {
+            Uri uri = null;
+            File file = new File(mTakePhotoSavePath, mTakePhotoPhotoName);
+            if (resultCode == Activity.RESULT_OK) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    uri = FileProvider.getUriForFile(mContext, mAuthority, file);
+                } else {
+                    uri = Uri.fromFile(file);
                 }
-                break;
-            case REQUESTCODE_TAKE:// 调用相机拍照
-                Uri uri = null;
-                File file = new File(mTakePhotoSavePath, mTakePhotoPhotoName);
-                if (resultCode == Activity.RESULT_OK) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        uri = FileProvider.getUriForFile(mContext, mAuthority, file);
-                    } else {
-                        uri = Uri.fromFile(file);
-                    }
-                }
-                String orgImgPath = file.getAbsolutePath();
-                String compressImgPath = null;
-                Bitmap bitmap = getScaleBitmap(uri, 800, 400, null, true);//对图片进行缩放
-                bitmap = rotateBitmap(bitmap, orgImgPath);//系统相机拍照，可能图片的方向和在imageview上显示的方向不同，这里进行旋转
-                compressImgPath = new File(mTakePhotoSavePath, "compress_" + mTakePhotoPhotoName).getAbsolutePath();
-                compressImage(bitmap);
-                saveBitmap(bitmap, compressImgPath);
-                callback.onResultPhone(uri, orgImgPath, compressImgPath);
-                break;
-            case REQUESTCODE_CUTTING:// 取得裁剪后的图片
-                if (data != null) {
-                    callback.onResultFromCrop(mCropPath + mCropName);
-                }
-                file = new File(getSaveImgPath());
-                if (file.exists()) {
-                    file.delete();
-                }
-                break;
+            }
+            String orgImgPath = file.getAbsolutePath();
+            String compressImgPath = null;
+            Bitmap bitmap = getScaleBitmap(uri, 800, 400, null, true);//对图片进行缩放
+            bitmap = rotateBitmap(bitmap, orgImgPath);//系统相机拍照，可能图片的方向和在imageview上显示的方向不同，这里进行旋转
+            compressImgPath = new File(mTakePhotoSavePath, "compress_" + mTakePhotoPhotoName).getAbsolutePath();
+            compressImage(bitmap);
+            saveBitmap(bitmap, compressImgPath);
+            callback.onResultPhone(uri, orgImgPath, compressImgPath);
+        } else if (requestCode == REQUESTCODE_CUTTING) {
+            if (data != null) {
+                callback.onResultFromCrop(mCropPath + mCropName);
+            }
+            File file = new File(getSaveImgPath());
+            if (file.exists()) {
+                file.delete();
+            }
         }
+
     }
 
 
@@ -231,33 +231,30 @@ public class InvokeSystemCameraUtils {
      * @param callback
      */
     public void luBanCompress(int requestCode, int resultCode, Intent data, OnGalleryResultCallback callback) {
-        switch (requestCode) {
-            case REQUESTCODE_PICK:// 直接从相册获取
-                try {
-                    Uri uri = data.getData();
-                    if (uri != null) {
-                        String path = getRealPathFromUri(uri);
-                        startLuBanCompress(uri, new File(path), callback);
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();// 用户点击取消操作时的异常
+
+        if (requestCode == REQUESTCODE_PICK) {
+            try {
+                Uri uri = data.getData();
+                if (uri != null) {
+                    String path = getRealPathFromUri(uri);
+                    startLuBanCompress(uri, new File(path), callback);
                 }
-                break;
-            case REQUESTCODE_TAKE:// 调用相机拍照
-                if (resultCode == Activity.RESULT_OK) {
-                    File file = new File(mTakePhotoSavePath, mTakePhotoPhotoName);
-                    startLuBanCompress(null, file, callback);
-                }
-                break;
-            case REQUESTCODE_CUTTING:// 取得裁剪后的图片
-                if (data != null) {
-                    callback.onResultFromCrop(mCropPath + mCropName);
-                }
-                File file = new File(getSaveImgPath());
-                if (file.exists()) {
-                    file.delete();
-                }
-                break;
+            } catch (NullPointerException e) {
+                e.printStackTrace();// 用户点击取消操作时的异常
+            }
+        } else if (requestCode == REQUESTCODE_TAKE) {
+            if (resultCode == Activity.RESULT_OK) {
+                File file = new File(mTakePhotoSavePath, mTakePhotoPhotoName);
+                startLuBanCompress(null, file, callback);
+            }
+        } else if (requestCode == REQUESTCODE_CUTTING) {
+            if (data != null) {
+                callback.onResultFromCrop(mCropPath + mCropName);
+            }
+            File file = new File(getSaveImgPath());
+            if (file.exists()) {
+                file.delete();
+            }
         }
     }
 
@@ -300,11 +297,12 @@ public class InvokeSystemCameraUtils {
      * @param uri 要裁剪的图片的URI
      */
 
-    public void startPhotoZoom(Uri uri, Activity activity) {
+    public void startPhotoZoom(Uri uri, Activity activity, int requestCode) {
         if (TextUtils.isEmpty(mCropPath)) {
             mCropPath = mTakePhotoSavePath;
             mCropName = "crop" + mTakePhotoPhotoName;
         }
+        REQUESTCODE_CUTTING = requestCode;
         File file = new File(mCropPath, mCropName);
         Intent intent = new Intent("com.android.camera.action.CROP");
         // crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
