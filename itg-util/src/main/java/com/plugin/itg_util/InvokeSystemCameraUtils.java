@@ -2,6 +2,7 @@ package com.plugin.itg_util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Application;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -41,14 +42,18 @@ public class InvokeSystemCameraUtils {
     private String mTakePhotoSavePath;
     private String mTakePhotoPhotoName;
     private int mCropHeight = 600, mCropWidth = 600;
+    private String mAuthority;
 
 
-    public static InvokeSystemCameraUtils create() {
+    public static InvokeSystemCameraUtils create(Application application, String authority) {
 
-        return new InvokeSystemCameraUtils();
+        return new InvokeSystemCameraUtils(application, authority);
     }
 
-    private InvokeSystemCameraUtils() {
+    private InvokeSystemCameraUtils(Context context, String authority) {
+        mContext = context;
+        mAuthority = authority;
+
     }
 
     public interface OnGalleryResultCallback {
@@ -67,11 +72,6 @@ public class InvokeSystemCameraUtils {
      * 剪切图片的名称
      */
     private String mCropName;
-
-
-    public void register(Context context) {
-        mContext = context;
-    }
 
 
     /**
@@ -147,7 +147,7 @@ public class InvokeSystemCameraUtils {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intentCamera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            uri = FileProvider.getUriForFile(activity, "com.yk.surveyor.fileprovider", file);
+            uri = FileProvider.getUriForFile(activity, mAuthority, file);
             intentCamera.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         } else {
             uri = Uri.fromFile(file);
@@ -195,7 +195,7 @@ public class InvokeSystemCameraUtils {
                 File file = new File(mTakePhotoSavePath, mTakePhotoPhotoName);
                 if (resultCode == Activity.RESULT_OK) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        uri = FileProvider.getUriForFile(mContext, "com.yk.surveyor.fileprovider", file);
+                        uri = FileProvider.getUriForFile(mContext, mAuthority, file);
                     } else {
                         uri = Uri.fromFile(file);
                     }
@@ -277,7 +277,7 @@ public class InvokeSystemCameraUtils {
                         Uri newUri = uri;
                         if (newUri == null) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                newUri = FileProvider.getUriForFile(mContext, "com.yk.surveyor.fileprovider", origFile);
+                                newUri = FileProvider.getUriForFile(mContext, mAuthority, origFile);
                             } else {
                                 newUri = Uri.fromFile(origFile);
                             }
