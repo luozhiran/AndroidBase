@@ -43,7 +43,7 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-extensions:${rootProject.ext.lifecycle_extensions}"
     api "androidx.lifecycle:lifecycle-extensions:${rootProject.ext.lifecycle_extensions}"
-    def room_version = "2.2.5"
+    def room_version = "2.2.6"
     api "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     api "androidx.room:room-rxjava2:$room_version"
